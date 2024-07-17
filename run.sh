@@ -9,6 +9,10 @@ fi
 # Assign parameters to variables
 old_domain=$1
 new_domain=$2
+# Define the new domain path
+domain_new_path="/home/$new_domain/public_html"
+# Define the old domain path
+domain_old_path="/home/$old_domain/public_html"
 
 script_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 extension_zip="$script_dir/all-in-one-wp-migration-unlimited-extension.zip"
@@ -122,6 +126,8 @@ restore_domain() {
     wp ai1wm restore "$latest_backup" --allow-root
     echo "Restore completed for $domain"
 
+	mv "$domain_old_path/wp-content/ai1wm-backups/"*.wpress "$domain_new_path/wp-content/ai1wm-backups/"
+
     # Uninstall the All-in-One WP Migration plugins after restore
     wp --allow-root plugin deactivate all-in-one-wp-migration-unlimited-extension
     wp --allow-root plugin delete all-in-one-wp-migration-unlimited-extension
@@ -130,8 +136,7 @@ restore_domain() {
     wp --allow-root plugin delete all-in-one-wp-migration
 }
 
-# Define the old domain path
-domain_old_path="/home/$old_domain/public_html"
+
 
 # Check if the old domain path exists
 if [ -d "$domain_old_path" ]; then
@@ -143,12 +148,8 @@ else
     exit 1
 fi
 
-# Define the new domain path
-domain_new_path="/home/$new_domain/public_html"
-
 # Create the new domain directory if it doesn't exist
 if [ -d "$domain_new_path" ]; then
-    mv "$domain_old_path/wp-content/ai1wm-backups/"*.wpress "$domain_new_path/wp-content/ai1wm-backups/"
     restore_domain "$domain_new_path"
 else
     echo "Error: Directory $domain_new_path does not exist!"
