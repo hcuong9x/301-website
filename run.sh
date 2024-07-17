@@ -19,10 +19,9 @@ backup_domain() {
     local domain_path="$1"
     local domain=$(basename "$(dirname "$domain_path")") # Extract domain name
     local owner_group=$(stat -c "%U:%G" "$domain_path")
-    log_info "Backing up $domain"
     
     cd "$domain_path" || {
-        log_error "Directory not found: $domain_path"
+        echo "Directory not found: $domain_path"
         return
     }
     echo "$domain_path"
