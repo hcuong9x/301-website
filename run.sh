@@ -157,7 +157,7 @@ restore_domain() {
     # remove older backup
     sudo rm -rf "$backup_dir"/*.wpress
 
-    Uninstall the All-in-One WP Migration plugins after restore
+    # Uninstall the All-in-One WP Migration plugins after restore
     wp --allow-root plugin deactivate all-in-one-wp-migration-unlimited-extension
     wp --allow-root plugin delete all-in-one-wp-migration-unlimited-extension
 
