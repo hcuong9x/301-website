@@ -16,6 +16,7 @@ domain_new_path="/home/$new_domain/public_html"
 
 script_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 extension_zip="$script_dir/all-in-one-wp-migration-unlimited-extension.zip"
+simple_website_redirect_plugin_zip="$script_dir/simple-website-redirect.zip" 
 echo "$extension_zip"
 
 # Define the backup_domain function
@@ -163,8 +164,30 @@ restore_domain() {
 
     wp --allow-root plugin deactivate all-in-one-wp-migration
     wp --allow-root plugin delete all-in-one-wp-migration
+
+    echo "Update owner $owner_group $domain_new_path"
+    sudo chown -R $owner_group $domain_new_path
 }
 
+config_redirect() {
+
+    cd "$domain_old_path"
+
+    wp --allow-root plugin deactivate all-in-one-wp-migration-unlimited-extension
+    wp --allow-root plugin deactivate all-in-one-wp-migration
+
+    wp --allow-root plugin install "$simple_website_redirect_plugin_zip" --activate
+
+    local owner_group=$(stat -c "%U:%G" "$domain_old_path")
+    sudo chown -R $owner_group "$domain_old_path/wp-content/plugins/simple-website-redirect"
+
+    # Set the redirection configurations in wp_options table
+    wp --allow-root option update simple_website_redirect_url "https://$new_domain"
+    wp --allow-root option update simple_website_redirect_type 301
+    wp --allow-root option update simple_website_redirect_status 1
+
+    echo "Redirection configured: $old_domain --> $new_domain"
+}
 
 
 # Check if the old domain path exists
@@ -181,6 +204,7 @@ fi
 if [ -d "$domain_new_path" ]; then
     echo "Step 2: Found the directory for the new domain at $domain_new_path"
     restore_domain "$domain_new_path"
+    config_redirect "$domain_old_path" "$domain_new_path"
 else
     echo "Error: Directory $domain_new_path does not exist!"
     exit 1
