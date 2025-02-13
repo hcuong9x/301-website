@@ -15,7 +15,7 @@ domain_old_path="/home/$old_domain/public_html"
 domain_new_path="/home/$new_domain/public_html"
 
 script_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-extension_zip="$script_dir/all-in-one-wp-migration-unlimited-extension.zip"
+extension_zip="$script_dir/all-in-one-wp-migration-url-extension.zip"
 simple_website_redirect_plugin_zip="$script_dir/simple-website-redirect.zip" 
 echo "$extension_zip"
 
