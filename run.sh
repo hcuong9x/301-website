@@ -15,7 +15,6 @@ domain_old_path="/home/$old_domain/public_html"
 domain_new_path="/home/$new_domain/public_html"
 
 script_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-root_extension_zip="$script_dir/all-in-one-wp-migration.zip"
 extension_zip="$script_dir/all-in-one-wp-migration-url-extension.zip"
 simple_website_redirect_plugin_zip="$script_dir/simple-website-redirect.zip" 
 echo "$extension_zip"
@@ -36,16 +35,24 @@ backup_domain() {
 
     echo "Start for $domain"
 
-	local ext_root_dir="/home/$domain/public_html/wp-content/plugins/all-in-one-wp-migration/"
-    if wp --allow-root plugin is-active all-in-one-wp-migration; then
-        # Check if the root extension is installed
+    if ! wp --allow-root plugin is-active all-in-one-wp-migration; then
+        # Check if the plugin is installed
+        if ! wp --allow-root plugin is-installed all-in-one-wp-migration; then
+            # Install and activate the plugin
+            echo "Install and activate all-in-one-wp-migration"
+            wp --allow-root plugin install all-in-one-wp-migration --activate
+        else
+            # Activate the plugin if it's installed but not active
+            echo "Activate all-in-one-wp-migration"
+            wp --allow-root plugin update all-in-one-wp-migration
+            wp --allow-root plugin activate all-in-one-wp-migration
+        fi
+        sudo chown -R "$owner_group" /home/"$domain"/public_html/wp-content/plugins/all-in-one-wp-migration/
+        sudo chmod -R 755 /home/"$domain"/public_html/wp-content/plugins/all-in-one-wp-migration/
+    else
+        wp --allow-root plugin update all-in-one-wp-migration
         echo "all-in-one-wp-migration is already active"
-        wp --allow-root plugin deactivate all-in-one-wp-migration
     fi
-	wp --allow-root plugin delete all-in-one-wp-migration
-    wp --allow-root plugin install "$extension_zip" --activate
-    sudo chown -R "$owner_group" "$ext_root_dir"
-    sudo chmod -R 755 "$ext_root_dir"
 
     local ext_dir="/home/$domain/public_html/wp-content/plugins/all-in-one-wp-migration-url-extension/"
     if wp --allow-root plugin is-active all-in-one-wp-migration-url-extension; then
@@ -54,7 +61,7 @@ backup_domain() {
         wp --allow-root plugin deactivate all-in-one-wp-migration-url-extension
     fi
     wp --allow-root plugin delete all-in-one-wp-migration-url-extension
-    wp --allow-root plugin install "$root_extension_zip" --activate
+    wp --allow-root plugin install "$extension_zip" --activate
     sudo chown -R "$owner_group" "$ext_dir"
     sudo chmod -R 755 "$ext_dir"
 
@@ -98,16 +105,24 @@ restore_domain() {
     echo "$domain"
     echo "$owner_group"
 
-	local ext_root_dir="/home/$domain/public_html/wp-content/plugins/all-in-one-wp-migration/"
-    if wp --allow-root plugin is-active all-in-one-wp-migration; then
-        # Check if the root extension is installed
+    if ! wp --allow-root plugin is-active all-in-one-wp-migration; then
+        # Check if the plugin is installed
+        if ! wp --allow-root plugin is-installed all-in-one-wp-migration; then
+            # Install and activate the plugin
+            echo "Install and activate all-in-one-wp-migration"
+            wp --allow-root plugin install all-in-one-wp-migration --activate
+        else
+            # Activate the plugin if it's installed but not active
+            echo "Activate all-in-one-wp-migration"
+            wp --allow-root plugin update all-in-one-wp-migration
+            wp --allow-root plugin activate all-in-one-wp-migration
+        fi
+        sudo chown -R "$owner_group" /home/"$domain"/public_html/wp-content/plugins/all-in-one-wp-migration/
+        sudo chmod -R 755 /home/"$domain"/public_html/wp-content/plugins/all-in-one-wp-migration/
+    else
+        wp --allow-root plugin update all-in-one-wp-migration
         echo "all-in-one-wp-migration is already active"
-        wp --allow-root plugin deactivate all-in-one-wp-migration
     fi
-	wp --allow-root plugin delete all-in-one-wp-migration
-    wp --allow-root plugin install "$root_extension_zip" --activate
-    sudo chown -R "$owner_group" "$ext_root_dir"
-    sudo chmod -R 755 "$ext_root_dir"
 
     local ext_dir="/home/$domain/public_html/wp-content/plugins/all-in-one-wp-migration-url-extension/"
     if wp --allow-root plugin is-active all-in-one-wp-migration-url-extension; then
