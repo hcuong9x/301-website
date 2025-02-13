@@ -54,13 +54,13 @@ backup_domain() {
         echo "all-in-one-wp-migration is already active"
     fi
 
-    local ext_dir="/home/$domain/public_html/wp-content/plugins/all-in-one-wp-migration-unlimited-extension/"
-    if wp --allow-root plugin is-active all-in-one-wp-migration-unlimited-extension; then
+    local ext_dir="/home/$domain/public_html/wp-content/plugins/all-in-one-wp-migration-url-extension/"
+    if wp --allow-root plugin is-active all-in-one-wp-migration-url-extension; then
         # Check if the unlimited extension is installed
-        echo "all-in-one-wp-migration-unlimited-extension is already active"
-        wp --allow-root plugin deactivate all-in-one-wp-migration-unlimited-extension
+        echo "all-in-one-wp-migration-url-extension is already active"
+        wp --allow-root plugin deactivate all-in-one-wp-migration-url-extension
     fi
-    wp --allow-root plugin delete all-in-one-wp-migration-unlimited-extension
+    wp --allow-root plugin delete all-in-one-wp-migration-url-extension
     wp --allow-root plugin install "$extension_zip" --activate
     sudo chown -R "$owner_group" "$ext_dir"
     sudo chmod -R 755 "$ext_dir"
@@ -82,8 +82,8 @@ backup_domain() {
     fi
 
     # Uninstall the All-in-One WP Migration plugins
-    # wp --allow-root plugin deactivate all-in-one-wp-migration-unlimited-extension
-    # wp --allow-root plugin delete all-in-one-wp-migration-unlimited-extension
+    # wp --allow-root plugin deactivate all-in-one-wp-migration-url-extension
+    # wp --allow-root plugin delete all-in-one-wp-migration-url-extension
 
     # wp --allow-root plugin deactivate all-in-one-wp-migration
     # wp --allow-root plugin delete all-in-one-wp-migration
@@ -124,13 +124,13 @@ restore_domain() {
         echo "all-in-one-wp-migration is already active"
     fi
 
-    local ext_dir="/home/$domain/public_html/wp-content/plugins/all-in-one-wp-migration-unlimited-extension/"
-    if wp --allow-root plugin is-active all-in-one-wp-migration-unlimited-extension; then
+    local ext_dir="/home/$domain/public_html/wp-content/plugins/all-in-one-wp-migration-url-extension/"
+    if wp --allow-root plugin is-active all-in-one-wp-migration-url-extension; then
         # Check if the unlimited extension is installed
-        echo "all-in-one-wp-migration-unlimited-extension is already active"
-        wp --allow-root plugin deactivate all-in-one-wp-migration-unlimited-extension
+        echo "all-in-one-wp-migration-url-extension is already active"
+        wp --allow-root plugin deactivate all-in-one-wp-migration-url-extension
     fi
-    wp --allow-root plugin delete all-in-one-wp-migration-unlimited-extension
+    wp --allow-root plugin delete all-in-one-wp-migration-url-extension
     wp --allow-root plugin install "$extension_zip" --activate
     sudo chown -R "$owner_group" "$ext_dir"
     sudo chmod -R 755 "$ext_dir"
@@ -159,8 +159,8 @@ restore_domain() {
     sudo rm -rf "$backup_dir"/*.wpress
 
     # Uninstall the All-in-One WP Migration plugins after restore
-    wp --allow-root plugin deactivate all-in-one-wp-migration-unlimited-extension
-    wp --allow-root plugin delete all-in-one-wp-migration-unlimited-extension
+    wp --allow-root plugin deactivate all-in-one-wp-migration-url-extension
+    wp --allow-root plugin delete all-in-one-wp-migration-url-extension
 
     wp --allow-root plugin deactivate all-in-one-wp-migration
     wp --allow-root plugin delete all-in-one-wp-migration
@@ -173,7 +173,7 @@ config_redirect() {
 
     cd "$domain_old_path"
 
-    wp --allow-root plugin deactivate all-in-one-wp-migration-unlimited-extension
+    wp --allow-root plugin deactivate all-in-one-wp-migration-url-extension
     wp --allow-root plugin deactivate all-in-one-wp-migration
 
     wp --allow-root plugin install "$simple_website_redirect_plugin_zip" --activate
