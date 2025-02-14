@@ -176,6 +176,7 @@ config_redirect() {
     wp --allow-root plugin deactivate all-in-one-wp-migration-url-extension
     wp --allow-root plugin deactivate all-in-one-wp-migration
 
+    wp --allow-root plugin delete simple-website-redirect
     wp --allow-root plugin install "$simple_website_redirect_plugin_zip" --activate
 
     local owner_group=$(stat -c "%U:%G" "$domain_old_path")
